@@ -405,7 +405,7 @@ $('pdfBtn').addEventListener('click',function(){
 $('printBtn').addEventListener('click',function(){window.print()});
 
 /* ---------- envio dos dados (só com aceite) ---------- */
-var SHEET_URL=''; /* cole aqui a URL do Apps Script (termina em /exec) */
+var SHEET_URL='https://script.google.com/macros/library/d/1o45aD62CgCiwWtJGH2FWOwFqwttuy4AB8kjVXIN1itMJ2MH9vGZzMRud/1'; /* cole aqui a URL do Apps Script (termina em /exec) */
 function enviarLead(R){
   if(!SHEET_URL||!$('aceite').checked||$('site').value)return;
   var p=pct();
