@@ -29,6 +29,7 @@
   --grid:rgba(226,193,118,.07); --shadow:0 24px 60px rgba(0,0,0,.45); color-scheme:dark;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-ui);
   background-image:linear-gradient(var(--grid) 1.5px,transparent 1.5px),linear-gradient(90deg,var(--grid) 1.5px,transparent 1.5px),linear-gradient(170deg,var(--paper) 0%,var(--paper2) 100%);
   background-size:180px 180px,180px 180px,100% 100%}
@@ -80,7 +81,7 @@ tfoot td{font-weight:700;border-top:2px solid var(--ink12);border-bottom:0}
 .q{margin-top:22px}
 .bar{display:flex;height:22px;border-radius:7px;overflow:hidden;margin-top:20px;background:var(--ink12)}
 .bar i{display:block;height:100%;transition:width .25s}
-.c-div{background:var(--rust)}.c-res{background:var(--sage)}.c-inv{background:var(--navy)}.c-lazer{background:var(--gold)}
+.c-div{background:var(--rust)}.c-res{background:var(--sage)}.c-jan{background:#5F8FB8}.c-inv{background:var(--navy)}.c-lazer{background:var(--gold)}
 .row{display:grid;grid-template-columns:1fr auto;gap:2px 14px;align-items:baseline;margin-top:22px}
 .row .nm{font-weight:600;font-size:15px}
 .row .nm i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:8px;vertical-align:-1px}
@@ -111,6 +112,14 @@ details p{margin:10px 0 0;font-size:15px;line-height:1.55;color:var(--ink70)}
 .legal{margin:22px auto 0;max-width:52ch;font-size:12.5px;line-height:1.55;color:var(--ink50)}
 .msg{font-size:13.5px;font-weight:600;margin-top:12px;min-height:1.2em;color:var(--sage)}
 @media (max-width:520px){#rep table th,#rep table td{font-size:12.5px;padding:10px 3px}#rep table th{font-size:9.5px;letter-spacing:.05em}#rep .card{padding:18px 16px}}
+.quote{font-family:var(--f-display);font-weight:700;font-size:clamp(19px,4.6vw,24px);line-height:1.25;letter-spacing:-.02em;margin:16px 0 0;padding-left:14px;border-left:4px solid #061623}
+.do{margin-top:16px;background:rgba(6,22,35,.09);border-radius:14px;padding:14px 16px;font-size:15px;line-height:1.5}
+.do b{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(6,22,35,.62);margin-bottom:4px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:16px}
+.stat{background:var(--ink12);border-radius:14px;padding:14px}
+.stat b{display:block;font-family:var(--f-display);font-size:24px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:4px}
+.stat small{display:block;font-size:13px;line-height:1.4;color:var(--ink70);margin-top:4px}
+.why{font-size:13px;line-height:1.4;color:var(--ink50);grid-column:1/-1;margin:-2px 0 0}
 @media (prefers-reduced-motion:reduce){.bar i{transition:none}}
 @media print{#wiz,.nav,.foot .btns,details,#pdfNote,.stepper{display:none!important}body{background:#fff!important}}
 .consent{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.45;color:var(--ink70);margin-top:18px}
@@ -171,11 +180,20 @@ details p{margin:10px 0 0;font-size:15px;line-height:1.55;color:var(--ink70)}
 
     <section class="card" id="ph2" aria-labelledby="t2" hidden>
       <h2 id="t2">Seu momento financeiro</h2>
-      <p class="hint">Três perguntas rápidas para montar a ordem certa. Os seus dados só são guardados se você marcou o aceite na fase 1.</p>
+      <p class="hint">Algumas perguntas rápidas, só de tocar, para montar a ordem certa. Os seus dados só são guardados se você marcou o aceite na fase 1.</p>
       <div class="q">
         <div class="lab" id="qd">Tem dívida com juros altos? (cartão, cheque especial)</div>
         <div class="chips" role="group" aria-labelledby="qd"><button class="chip" data-q="debt" data-v="1" aria-pressed="false" type="button">Sim</button><button class="chip" data-q="debt" data-v="0" aria-pressed="true" type="button">Não</button></div>
-        <div class="f" id="debtField" hidden style="margin-top:16px"><label class="lab" for="dval">Valor aproximado dessas dívidas (R$, opcional)</label><input id="dval" type="number" inputmode="decimal" min="0" step="100" placeholder="0"></div>
+        <div id="debtField" hidden style="margin-top:16px">
+          <div class="lab" id="qb">Mais ou menos de que tamanho?</div>
+          <div class="chips" role="group" aria-labelledby="qb" id="bandChips">
+            <button class="chip" data-q="band" data-v="a" aria-pressed="false" type="button">Pequena</button>
+            <button class="chip" data-q="band" data-v="b" aria-pressed="true" type="button">Média</button>
+            <button class="chip" data-q="band" data-v="c" aria-pressed="false" type="button">Grande</button>
+          </div>
+          <p class="hint" id="bandHint">Pequena: cabe fácil no seu 13º. Grande: passa dele.</p>
+          <div class="f" style="margin-top:14px"><label class="lab" for="dval">Se souber, o valor aproximado (R$, opcional)</label><input id="dval" type="number" inputmode="decimal" min="0" step="100" placeholder="0"></div>
+        </div>
       </div>
       <div class="q">
         <div class="lab" id="qr">Como está a sua reserva de emergência?</div>
@@ -191,15 +209,29 @@ details p{margin:10px 0 0;font-size:15px;line-height:1.55;color:var(--ink70)}
         <div class="f"><label class="lab" for="ess">Quanto você gasta por mês com o essencial? (R$, opcional)</label><input id="ess" type="number" inputmode="decimal" min="0" step="100" placeholder="Moradia, comida, transporte, contas"></div>
         <p class="hint">Com esse valor, o relatório mostra a sua meta de reserva em reais.</p>
       </div>
+      <div class="q">
+        <div class="lab" id="qj">Vem gasto grande em janeiro? (IPVA, IPTU, matrícula, material escolar)</div>
+        <div class="chips" role="group" aria-labelledby="qj"><button class="chip" data-q="jan" data-v="1" aria-pressed="false" type="button">Sim</button><button class="chip" data-q="jan" data-v="0" aria-pressed="true" type="button">Não</button></div>
+        <div class="f" id="janField" hidden style="margin-top:14px"><label class="lab" for="jval">Quanto, mais ou menos? (R$, opcional)</label><input id="jval" type="number" inputmode="decimal" min="0" step="100" placeholder="0"></div>
+      </div>
+      <div class="q">
+        <div class="lab" id="qs">Qual o seu estilo?</div>
+        <div class="chips" role="group" aria-labelledby="qs">
+          <button class="chip" data-q="style" data-v="seg" aria-pressed="false" type="button">Mais segurança</button>
+          <button class="chip" data-q="style" data-v="eq" aria-pressed="true" type="button">Equilibrado</button>
+          <button class="chip" data-q="style" data-v="cresc" aria-pressed="false" type="button">Mais crescimento</button>
+        </div>
+      </div>
       <div class="nav"><button class="btn alt" id="b2" type="button">Voltar</button><button class="btn" id="n2" type="button">Continuar</button></div>
     </section>
 
     <section class="card" id="ph3" aria-labelledby="t3" hidden>
       <h2 id="t3">Sua divisão</h2>
-      <p class="hint">Esta é uma divisão de exemplo, montada com as suas respostas. Mexa nos controles e ajuste ao seu caso.</p>
-      <div class="bar" id="bar" role="img" aria-label="Divisão do 13º"><i class="c-div" id="bd"></i><i class="c-res" id="br"></i><i class="c-inv" id="bi"></i><i class="c-lazer" id="bl"></i></div>
+      <p class="hint">Montamos esta divisão com as suas respostas. Mexa nos controles e ajuste ao seu caso.</p><p class="hint" id="whyTxt" style="margin-top:6px"></p>
+      <div class="bar" id="bar" role="img" aria-label="Divisão do 13º"><i class="c-div" id="bd"></i><i class="c-res" id="br"></i><i class="c-jan" id="bj"></i><i class="c-inv" id="bi"></i><i class="c-lazer" id="bl"></i></div>
       <div class="row"><span class="nm"><i class="c-div"></i>Dívidas</span><span><span class="val" id="vd">R$ 0</span><span class="pc" id="pd">0%</span></span><input id="sd" type="range" min="0" max="100" step="5" value="0" aria-label="Percentual para dívidas"></div>
       <div class="row"><span class="nm"><i class="c-res"></i>Reserva de emergência</span><span><span class="val" id="vr">R$ 0</span><span class="pc" id="pr">0%</span></span><input id="sr" type="range" min="0" max="100" step="5" value="0" aria-label="Percentual para reserva"></div>
+      <div class="row" id="rowJ"><span class="nm"><i class="c-jan"></i>Contas de janeiro</span><span><span class="val" id="vj">R$ 0</span><span class="pc" id="pj">0%</span></span><input id="sj" type="range" min="0" max="100" step="5" value="0" aria-label="Percentual para contas de janeiro"></div>
       <div class="row"><span class="nm"><i class="c-inv"></i>Investimentos</span><span><span class="val" id="vi">R$ 0</span><span class="pc" id="pi">0%</span></span><input id="si" type="range" min="0" max="100" step="5" value="0" aria-label="Percentual para investimentos"></div>
       <div class="row"><span class="nm"><i class="c-lazer"></i>Para curtir (o que sobra)</span><span><span class="val" id="vl">R$ 0</span><span class="pc" id="pl">0%</span></span></div>
       <div class="nav"><button class="btn alt" id="b3" type="button">Voltar</button><button class="btn gold" id="n3" type="button">Concluir e ver o relatório</button></div>
@@ -211,7 +243,9 @@ details p{margin:10px 0 0;font-size:15px;line-height:1.55;color:var(--ink70)}
     <div class="verdict" id="vbox">
       <div class="lab" id="vwho">Seu relatório do 13º</div>
       <h2 id="vt"></h2>
+      <p class="quote" id="vq"></p>
       <p id="vs"></p>
+      <div class="do"><b>Faça isso hoje</b><span id="vdo"></span></div>
     </div>
 
     <section class="card" aria-labelledby="r1">
@@ -221,6 +255,7 @@ details p{margin:10px 0 0;font-size:15px;line-height:1.55;color:var(--ink70)}
         <div style="background:var(--ink12)"><span class="lab">1ª parcela · até 30/11</span><b id="r1p" style="color:var(--ink)">R$ 0</b></div>
         <div style="background:var(--ink12)"><span class="lab">2ª parcela · até 18/12</span><b id="r2p" style="color:var(--ink)">R$ 0</b></div>
       </div>
+      <div class="stats" id="rstats"></div>
       <h3>Para onde vai cada parcela</h3>
       <div class="tw"><table>
         <thead><tr><th scope="col">Destino</th><th scope="col">1ª parcela</th><th scope="col">2ª parcela</th><th scope="col">Total</th></tr></thead>
@@ -282,7 +317,7 @@ function calc13(sal,ext,meses,dep){
 var $=function(id){return document.getElementById(id)};
 var brl=function(n){return n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})};
 var num=function(id){var v=parseFloat($(id).value);return isFinite(v)&&v>0?v:0};
-var C=null, S={debt:0,res:'nao'}, REP=null;
+var C=null, S={debt:0,band:'b',res:'nao',jan:0,style:'eq'}, REP=null;
 
 /* ---------- fase 1 ---------- */
 function update(){
@@ -298,6 +333,7 @@ function go(n){
   [1,2,3].forEach(function(k){$('ph'+k).hidden=(k!==n);
     var s=$('s'+k);s.className=k===n?'on':(k<n?'done':'')});
   $('rep').hidden=true;$('wiz').hidden=false;
+  if(n===2)bands();
   if(n===3)applySuggest();
   window.scrollTo(0,0)}
 $('n1').addEventListener('click',function(){go(2)});
@@ -309,56 +345,100 @@ $('again').addEventListener('click',function(){$('pdfMsg').textContent='';go(1)}
 
 /* ---------- fase 2 ---------- */
 document.querySelectorAll('.chip').forEach(function(b){b.addEventListener('click',function(){
-  var k=b.dataset.q;S[k]=k==='debt'?+b.dataset.v:b.dataset.v;
+  var k=b.dataset.q;S[k]=(k==='debt'||k==='jan')?+b.dataset.v:b.dataset.v;
   document.querySelectorAll('.chip[data-q="'+k+'"]').forEach(function(o){o.setAttribute('aria-pressed',o===b?'true':'false')});
-  if(k==='debt')$('debtField').hidden=!S.debt})});
+  if(k==='debt')$('debtField').hidden=!S.debt;
+  if(k==='jan')$('janField').hidden=!S.jan})});
+
+function r50(x){return Math.max(50,Math.round(x/50)*50)}
+function bands(){
+  if(!C)return;var a=r50(C.liq*.35),b=r50(C.liq);
+  var cs=document.querySelectorAll('#bandChips .chip');
+  cs[0].textContent='Pequena (até '+brl(a)+')';cs[1].textContent='Média (até '+brl(b)+')';cs[2].textContent='Grande (mais que '+brl(b)+')';
+  $('bandHint').textContent='Escolha o que mais se aproxima. Se souber o valor, preencha abaixo e o plano fica mais exato.'}
+function debtRatio(){var L=C.liq;if(!S.debt||!(L>0))return 0;var da=num('dval');
+  if(da>0)return da/L;return {a:.2,b:.65,c:1.4}[S.band]||.65}
+function janAmt(){return S.jan?num('jval'):0}
 
 /* ---------- fase 3 ---------- */
-function pct(){return {d:+$('sd').value,r:+$('sr').value,i:+$('si').value}}
+function pct(){return {d:+$('sd').value,r:+$('sr').value,j:+$('sj').value,i:+$('si').value}}
+var R5=function(x){return Math.round(x/5)*5}, C5=function(x){return Math.ceil(x/5-1e-9)*5};
 function suggest(){
-  var L=C.liq,d=0;
-  if(S.debt){var da=num('dval');d=(da>0&&L>0)?Math.min(80,Math.max(5,Math.round(da/L*100/5)*5)):70}
-  var rest=100-d,cur=Math.min(10,rest),rest2=rest-cur;
-  var share={nao:.8,lt3:.6,m36:.3,gt6:0}[S.res];
-  var r=Math.round(rest2*share/5)*5,inv=rest2-r;
-  return {d:d,r:r,i:inv}}
-function applySuggest(){var s=suggest();$('sd').value=s.d;$('sr').value=s.r;$('si').value=s.i;draw()}
+  var L=C.liq,rho=debtRatio(),why=[],ess=num('ess');
+  var lazer={seg:5,eq:10,cresc:5}[S.style];
+  var d=0;
+  if(S.debt){
+    if(rho<=.35){d=Math.min(40,Math.max(5,C5(rho*100)));why.push('Dívida pequena: quitamos ela por inteiro e seguimos.')}
+    else if(rho<=1){d=Math.min(75,C5(rho*100));why.push('Dívida média: a maior parte do 13º vai para ela, porque os juros costumam pesar mais que qualquer rendimento.')}
+    else{d=70;why.push('Dívida grande: '+d+'% vai para ela agora. O resto da dívida pede renegociação.')}}
+  var j=0;
+  if(S.jan){var ja=janAmt();j=ja>0?Math.min(40,C5(ja/L*100)):10;why.push('Separamos '+j+'% para as contas de janeiro, para elas não virarem dívida.')}
+  if(d+j>95){j=Math.max(0,95-d);if(S.jan)why.push('Como a dívida pede a maior parte, as contas de janeiro ficaram com '+j+'%: renegocie ou parcele o que passar disso.')}
+  lazer=Math.min(lazer,Math.max(0,100-d-j));
+  var rest=Math.max(0,100-d-j-lazer);
+  var curM={nao:0,lt3:1.5,m36:4.5,gt6:6}[S.res];
+  var share={nao:.85,lt3:.65,m36:.35,gt6:0}[S.res];
+  share=Math.min(1,Math.max(0,share+(S.style==='seg'?.1:0)-(S.style==='cresc'?.15:0)));
+  var r=R5(rest*share);
+  if(ess>0&&S.res!=='gt6'){var need=Math.max(0,ess*6-ess*curM),needPct=C5(need/L*100);if(needPct<r){r=Math.max(0,needPct);why.push('A reserva já fecha com '+r+'%: o que passa disso vai para investimentos.')}}
+  r=Math.min(r,rest);var inv=rest-r;
+  return {d:d,r:r,j:j,i:inv,why:why.join(' ')}}
+function applySuggest(){var s=suggest();$('sd').value=s.d;$('sr').value=s.r;$('sj').value=s.j;$('si').value=s.i;$('rowJ').hidden=!S.jan;$('whyTxt').textContent=s.why;draw()}
 function draw(){
-  var p=pct(),l=Math.max(0,100-p.d-p.r-p.i),v={d:p.d,r:p.r,i:p.i,l:l};
-  ['d','r','i','l'].forEach(function(k){
+  var p=pct(),l=Math.max(0,100-p.d-p.r-p.j-p.i),v={d:p.d,r:p.r,j:p.j,i:p.i,l:l};
+  ['d','r','j','i','l'].forEach(function(k){
     $('v'+k).textContent=brl(r2(C.liq*v[k]/100));$('p'+k).textContent=v[k]+'%';$('b'+k).style.width=v[k]+'%'});
-  $('bar').setAttribute('aria-label','Dívidas '+p.d+'%, reserva '+p.r+'%, investimentos '+p.i+'%, para curtir '+l+'%')}
+  $('bar').setAttribute('aria-label','Dívidas '+p.d+'%, reserva '+p.r+'%, contas de janeiro '+p.j+'%, investimentos '+p.i+'%, para curtir '+l+'%')}
 function fit(changed){
-  var p=pct(),over=p.d+p.r+p.i-100;
+  var p=pct(),over=p.d+p.r+p.j+p.i-100;
   if(over>0){var el=$(changed);el.value=Math.max(0,+el.value-over)}draw()}
-['sd','sr','si'].forEach(function(id){$(id).addEventListener('input',function(){fit(id)})});
+['sd','sr','sj','si'].forEach(function(id){$(id).addEventListener('input',function(){fit(id)})});
 
 /* ---------- relatório ---------- */
 function verdict(){
-  if(S.debt)return {t:'Prioridade número 1: sair da dívida cara',s:'Juros de cartão e cheque especial costumam pesar mais do que qualquer rendimento. Por isso a maior parte do seu 13º vai primeiro para as dívidas, e só depois para o resto.'};
-  if(S.res==='nao'||S.res==='lt3')return {t:'Prioridade: montar a sua reserva de emergência',s:'Sem reserva, um imprevisto vira dívida. O seu 13º pode dar o primeiro grande passo para que isso não aconteça.'};
-  if(S.res==='m36')return {t:'Você está no caminho: complete a reserva e comece a investir',s:'Você já tem uma boa base. Falta completar até 6 meses de gastos essenciais e só então direcionar o excedente para investir.'};
-  return {t:'Reserva em dia: o foco agora é investir com calma',s:'Com a reserva completa, o 13º pode ir para os seus objetivos de longo prazo. Antes de aplicar, entenda o produto, o prazo e o risco.'}}
+  var rho=debtRatio(),lowRes=(S.res==='nao'||S.res==='lt3');
+  if(S.debt&&rho>1)return {t:'Dívida alta: ataque ela primeiro',q:'Enquanto a dívida cresce, nada que você guarda corre mais rápido que ela.',s:'O seu 13º não paga tudo, mas pode derrubar boa parte do saldo. Use a maior fatia para a dívida e renegocie o que sobrar, antes de pensar em guardar ou investir.',a:'Abra o app do banco e peça o valor de quitação à vista e as opções de renegociação. O valor à vista costuma ser menor que o saldo.'};
+  if(S.debt&&rho>.35)return {t:'Quite a dívida e proteja o resto',q:'Quem quita no 13º começa janeiro respirando.',s:'A sua dívida cabe no 13º. Quitá-la derruba juros que você paga todo mês, e o que sobra reforça a reserva e as contas de janeiro.',a:'Peça a quitação à vista, confirme o valor final com o banco e guarde o comprovante de quitação.'};
+  if(S.debt)return {t:'Dívida pequena resolve já: quite e siga',q:'Dívida pequena não manda no seu plano: paga e esquece.',s:'O valor é pequeno perto do seu 13º, então ele não precisa ocupar a maior parte do plano. Quite por inteiro e use o resto onde faz mais diferença.',a:lowRes?'Quite a dívida à vista e, no mesmo dia, separe o valor da reserva em uma conta só para isso.':'Quite a dívida à vista e guarde o comprovante.'};
+  if(lowRes)return {t:'O seu 13º é o tijolo para montar a sua reserva',q:'Reserva é o seguro para o imprevisto não virar dívida.',s:'Sem dívida cara, a sua maior vantagem agora é transformar o 13º em colchão. Ele é o primeiro grande passo para dormir tranquilo.',a:'Abra uma aplicação de resgate fácil só para a reserva, separada da conta do dia a dia.'};
+  if(S.res==='m36')return {t:'Você está no caminho: complete a reserva e comece a investir',q:'Reserva quase pronta: agora cada real começa a trabalhar para você.',s:'Você já tem uma boa base. Complete até 6 meses de gastos essenciais e só então direcione o excedente para investir.',a:'Calcule quanto falta para fechar os 6 meses e separe esse valor logo na 1ª parcela.'};
+  return {t:'Reserva em dia: o 13º pode trabalhar pelo futuro',q:'Quem já tem reserva pode se dar ao luxo de pensar longe.',s:'Com a reserva completa, o 13º pode ir para os seus objetivos de longo prazo. Antes de aplicar, entenda o produto, o prazo e o risco.',a:'Escreva o objetivo e o prazo antes de escolher onde aplicar. O objetivo define o caminho, e não o contrário.'}}
 function build(){
-  var p=pct(),l=Math.max(0,100-p.d-p.r-p.i),L=C.liq;
-  var names=['Dívidas','Reserva de emergência','Investimentos','Para curtir'],pc=[p.d,p.r,p.i,l];
+  var p=pct(),l=Math.max(0,100-p.d-p.r-p.j-p.i),L=C.liq;
+  var names=['Dívidas','Reserva de emergência','Contas de janeiro','Investimentos','Para curtir'],pc=[p.d,p.r,p.j,p.i,l];
   var amt=pc.map(function(x){return r2(L*x/100)});
-  amt[3]=r2(L-amt[0]-amt[1]-amt[2]);
+  amt[4]=r2(L-amt[0]-amt[1]-amt[2]-amt[3]);
   var left=C.p1,items=names.map(function(n,k){var a=amt[k],t=Math.min(a,left);left=r2(left-t);
-    return {nome:n,pct:pc[k],val:a,p1:t,p2:r2(a-t)}});
-  var steps=[],ess=num('ess');
-  if(S.debt)steps.push('Liste cada dívida com valor e juro e comece pela de juro mais alto. Se não der para quitar tudo, renegocie o que sobrar.');
-  if(S.res!=='gt6'){
-    steps.push(ess>0?'Sua meta de reserva é de '+brl(ess*3)+' a '+brl(ess*6)+' (3 a 6 meses de gastos essenciais), em um lugar de resgate fácil.':'Some os seus gastos essenciais do mês e multiplique por 3 a 6. Esse é o tamanho da sua reserva.')}
+    return {nome:n,pct:pc[k],val:a,p1:t,p2:r2(a-t)}}).filter(function(it){return it.pct>0||it.val>0});
+  var ess=num('ess'),da=S.debt?num('dval'):0,ja=janAmt(),V=verdict();
+  var curM={nao:0,lt3:1.5,m36:4.5,gt6:6}[S.res];
+  /* números que explicam o plano */
+  var stats=[];
+  if(ess>0){var dias=Math.round(L/(ess/30));stats.push({k:'Seu 13º paga',v:dias+' dias',t:'dos seus gastos essenciais, com o líquido de '+brl(L)+'.'})}
+  if(ess>0&&S.res!=='gt6'){var metaMax=ess*6,tem=ess*curM,pr=Math.min(100,Math.round((tem+amt[1])/metaMax*100));
+    stats.push({k:'Reserva depois do plano',v:pr+'%',t:'da meta de 6 meses ('+brl(metaMax)+'). Falta '+brl(Math.max(0,r2(metaMax-tem-amt[1])))+'.'})}
+  if(da>0){var q=Math.min(100,Math.round(amt[0]/da*100));stats.push({k:'Dívida quitada com o plano',v:q+'%',t:q>=100?'A dívida some e sobra '+brl(r2(amt[0]-da))+' para o resto.':'Ainda ficam '+brl(r2(da-amt[0]))+' para renegociar.'})}
+  if(S.jan&&ja>0){var cj=Math.min(100,Math.round(amt[2]/ja*100));stats.push({k:'Contas de janeiro cobertas',v:cj+'%',t:'de '+brl(ja)+' previstos.'})}
+  if(amt[3]>0)stats.push({k:'Para investir',v:brl(amt[3]),t:'Só depois de reserva e dívidas no caminho certo.'});
+  /* passos com data */
+  var p1l=items.filter(function(it){return it.p1>0}).map(function(it){return it.nome.toLowerCase()+' ('+brl(it.p1)+')'}),
+      p2l=items.filter(function(it){return it.p2>0}).map(function(it){return it.nome.toLowerCase()+' ('+brl(it.p2)+')'});
+  var steps=[];
+  steps.push('Até 30/11 (1ª parcela de '+brl(C.p1)+'): '+(p1l.join(', ')||'defina o destino')+'. Faça isso no dia em que o dinheiro cair.');
+  steps.push('Até 18/12 (2ª parcela de '+brl(C.p2)+'): '+(p2l.length?p2l.join(', '):'já está tudo encaminhado')+'.');
+  if(S.debt)steps.push('Liste cada dívida com valor e juro e comece pela de juro mais alto. '+(debtRatio()>1?'Renegocie o que sobrar.':'Peça sempre o valor de quitação à vista.'));
+  if(S.jan)steps.push('Em janeiro: separe o valor das contas (IPVA, IPTU, matrícula, material) logo no dia 1, para elas não pegarem o seu orçamento de surpresa.');
+  if(S.res!=='gt6')steps.push(ess>0?'Sua meta de reserva é de '+brl(ess*3)+' a '+brl(ess*6)+' (3 a 6 meses de gastos essenciais), em um lugar de resgate fácil.':'Some os seus gastos essenciais do mês e multiplique por 3 a 6. Esse é o tamanho da sua reserva.');
   steps.push('Antes de investir, entenda o produto, o prazo e o risco. Não existe uma opção certa para todo mundo.');
   steps.push('Combine o valor "para curtir" antes de o dinheiro cair, para ele não consumir o resto do plano.');
   steps.push('Confira o valor real no seu holerite ou com o RH e ajuste o plano se for diferente.');
   var nome=$('nome').value.trim();
-  REP={nome:nome,liq:L,p1:C.p1,p2:C.p2,bruto:C.bruto,inss:C.inss,ir:C.ir,v:verdict(),items:items,steps:steps,ess:ess}}
+  REP={nome:nome,liq:L,p1:C.p1,p2:C.p2,bruto:C.bruto,inss:C.inss,ir:C.ir,v:V,items:items,steps:steps,stats:stats,ess:ess}}
 function finish(){
   build();var R=REP;
   $('vwho').textContent=R.nome?('Relatório do 13º de '+R.nome):'Seu relatório do 13º';
-  $('vt').textContent=R.v.t;$('vs').textContent=R.v.s;
+  $('vt').textContent=R.v.t;$('vq').textContent='“'+R.v.q+'”';$('vs').textContent=R.v.s;$('vdo').textContent=R.v.a;
+  $('rstats').innerHTML=R.stats.map(function(x){return '<div class="stat"><span class="lab">'+x.k+'</span><b>'+x.v+'</b><small>'+x.t.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</small></div>'}).join('');$('rstats').hidden=!R.stats.length;
   $('rl').textContent=brl(R.liq);$('r1p').textContent=brl(R.p1);$('r2p').textContent=brl(R.p2);
   $('rtb').innerHTML=R.items.map(function(it){return '<tr><td>'+it.nome+' <span class="hint" style="display:inline">('+it.pct+'%)</span></td><td>'+brl(it.p1)+'</td><td>'+brl(it.p2)+'</td><td>'+brl(it.val)+'</td></tr>'}).join('');
   $('rtf').innerHTML='<tr><td>Total</td><td>'+brl(R.p1)+'</td><td>'+brl(R.p2)+'</td><td>'+brl(R.liq)+'</td></tr>';
@@ -381,6 +461,9 @@ function makePdf(R){
   doc.setTextColor(6,22,35);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.text(vl,M+6,y+2);
   doc.setFont('helvetica','normal');doc.setFontSize(10.5);doc.text(sl,M+6,y+2+vl.length*7+3);
   y+=bh+4;
+  para('“'+R.v.q+'”',12,true,[6,22,35],3);
+  para('Faça isso hoje: '+R.v.a,10.5,false,[40,50,60],4);
+  if(R.stats&&R.stats.length){para('O que o seu 13º faz por você',13,true,[6,22,35],3);R.stats.forEach(function(x){para(x.k+': '+x.v+' · '+x.t,10.5,false,[40,50,60],2)});y+=4}
   para('Seu 13º em números',13,true,[6,22,35],3);
   var rows=[['13º bruto',brl(R.bruto)],['INSS','- '+brl(R.inss)],['Imposto de Renda','- '+brl(R.ir)],['13º líquido',brl(R.liq)],['1ª parcela (até 30/11)',brl(R.p1)],['2ª parcela (até 18/12)',brl(R.p2)]];
   rows.forEach(function(r,k){ensure(8);doc.setFont('helvetica',k===3?'bold':'normal');doc.setFontSize(11);doc.setTextColor(6,22,35);
@@ -411,7 +494,7 @@ function enviarLead(R){
   var p=pct();
   var dados={nome:R.nome,contato:($('contato').value||'').trim(),salario:num('sal'),extras:num('ext'),dependentes:Math.floor(num('dep')),
     meses:+$('mes').value,divida:S.debt?'sim':'nao',divida_valor:S.debt?num('dval'):0,reserva:S.res,essencial:R.ess,
-    bruto:R.bruto,liquido:R.liq,p1:R.p1,p2:R.p2,pct_dividas:p.d,pct_reserva:p.r,pct_invest:p.i,veredito:R.v.t,
+    bruto:R.bruto,liquido:R.liq,p1:R.p1,p2:R.p2,pct_dividas:p.d,pct_reserva:p.r,pct_invest:p.i,pct_janeiro:p.j,estilo:S.style,veredito:R.v.t,
     origem:(location.search||'').slice(0,80)};
   try{fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(dados)})}catch(e){}}
 update();
